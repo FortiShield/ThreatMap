@@ -12,7 +12,7 @@ const auth = new ThreatmapAuth(
   new BrowserApprover((request) => {
     console.log(`Visit ${request.verificationUrl}`);
     console.log(`Enter code: ${request.userCode}`);
-  })
+  }),
 );
 
 const token = await auth.startAuthenticationFlow();

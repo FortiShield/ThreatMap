@@ -1,28 +1,22 @@
-import { defineConfig } from 'histoire'
-import { HstVue } from '@histoire/plugin-vue'
-import Vue from '@vitejs/plugin-vue'
+import { defineConfig } from "histoire";
+import { HstVue } from "@histoire/plugin-vue";
+import Vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
   theme: {
     title: "ThreatMap UI Kit",
     defaultColorScheme: "dark",
   },
-  setupFile: './src/stories/setup/index.ts',
+  setupFile: "./src/stories/setup/index.ts",
   outDir: "./dist-ui",
-  storyMatch: [
-    "./src/stories/**/*.story.vue",
-  ],
-  plugins: [
-    HstVue(),
-  ],
+  storyMatch: ["./src/stories/**/*.story.vue"],
+  plugins: [HstVue()],
   vite: {
-    plugins: [
-      Vue(),
-    ],
+    plugins: [Vue()],
     server: {
       fs: {
-        allow: ['../../node_modules'],
+        allow: ["../../node_modules"],
       },
     },
   },
-})
+});

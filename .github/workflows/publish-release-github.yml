@@ -88,7 +88,8 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN || github.token }}
           NPM_CONFIG_USERCONFIG: ${{ github.workspace }}/.npmrc.github
-        run: | # zizmor: ignore[use-trusted-publishing] GitHub Packages requires token authentication
+        run:
+          | # zizmor: ignore[use-trusted-publishing] GitHub Packages requires token authentication
           for package in sdk-backend sdk-frontend sdk-workflow; do
             version="$(node -p "require('./$(find packages -maxdepth 3 -type d -name "$package" | head -n1)/package.json').version")"
             if [[ "$version" != "${RELEASE_REF#v}" ]]; then

@@ -1,3 +1,3 @@
-# @threatmap/__plugin_id__
+# @threatmap/**plugin_id**
 
-Specification for the __plugin_id__ plugin.
+Specification for the **plugin_id** plugin.

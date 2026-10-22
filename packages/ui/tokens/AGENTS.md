@@ -8,25 +8,25 @@ _The design token source, and the generator that turns it into CSS and types._
 
 Seventeen files under `src/tokens`. Everything else in this package is generated from them.
 
-| File                           | Holds                                                                                    |
-| ------------------------------ | ---------------------------------------------------------------------------------------- |
-| `resolver.json`                | The manifest. Names the sets, the appearances, and the order they compose in             |
-| `base.tokens.json`             | The palette. Raw values with no job attached, identical in both appearances              |
-| `appearance/dark.tokens.json`  | The semantic tier for the dark appearance                                                |
-| `appearance/light.tokens.json` | The semantic tier for the light appearance                                               |
-| `type.tokens.json`             | The type system. Roles, families, weights and the measure, identical in both appearances |
-| `space.tokens.json`            | The grid unit and the radius. Fixed in pixels, identical in both appearances             |
-| `depth.tokens.json`            | The layer scale. Ten names, identical in both appearances                                |
-| `motion.tokens.json`           | Two durations and two easings, identical in both appearances                             |
-| `legacy.json`                  | The tokens read directly as a colour value, and the name each one keeps                  |
-| `icon.tokens.json`             | The icon size rungs                                                                      |
-| `state.tokens.json`            | The interaction state values, such as the disabled opacity                               |
-| `pairings.json`                | Every place a colour lands on another colour, and the contrast rule that applies         |
-| `contrast-accepted.json`       | The pairings below the floor today, each with the reason it is not fixed here             |
-| `deprecations.json`            | Names on their way out, with the version that announced each and what to move to         |
-| `contract.json`                | The names the last release published, so a removal without a window fails the build      |
+| File                           | Holds                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| `resolver.json`                | The manifest. Names the sets, the appearances, and the order they compose in                |
+| `base.tokens.json`             | The palette. Raw values with no job attached, identical in both appearances                 |
+| `appearance/dark.tokens.json`  | The semantic tier for the dark appearance                                                   |
+| `appearance/light.tokens.json` | The semantic tier for the light appearance                                                  |
+| `type.tokens.json`             | The type system. Roles, families, weights and the measure, identical in both appearances    |
+| `space.tokens.json`            | The grid unit and the radius. Fixed in pixels, identical in both appearances                |
+| `depth.tokens.json`            | The layer scale. Ten names, identical in both appearances                                   |
+| `motion.tokens.json`           | Two durations and two easings, identical in both appearances                                |
+| `legacy.json`                  | The tokens read directly as a colour value, and the name each one keeps                     |
+| `icon.tokens.json`             | The icon size rungs                                                                         |
+| `state.tokens.json`            | The interaction state values, such as the disabled opacity                                  |
+| `pairings.json`                | Every place a colour lands on another colour, and the contrast rule that applies            |
+| `contrast-accepted.json`       | The pairings below the floor today, each with the reason it is not fixed here               |
+| `deprecations.json`            | Names on their way out, with the version that announced each and what to move to            |
+| `contract.json`                | The names the last release published, so a removal without a window fails the build         |
 | `plugin-compat.json`           | The legacy colour names a plugin built before the migration reads, and the token each takes |
-| `plugin-primevue.json`         | The `--p-` names such a plugin reads, scoped to what it renders into                     |
+| `plugin-primevue.json`         | The `--p-` names such a plugin reads, scoped to what it renders into                        |
 
 The layout follows the W3C design token resolver module, version 2025.10. The manifest composes the palette first and then one appearance file, and the later file wins.
 
@@ -107,7 +107,7 @@ Nothing under `src/__generated__` is edited by hand. It is committed rather than
 | `tokens.css`         | The palette, the appearance switch, and the theme block that generates utilities      |
 | `legacy.css`         | The variable names the product uses today, so the migration can prove nothing changed |
 | `tokens.ts`          | The union of every token name                                                         |
-| `tokens.public.json` | A flat reference, published as `@threatmap/tokens/tokens.json`                            |
+| `tokens.public.json` | A flat reference, published as `@threatmap/tokens/tokens.json`                        |
 | `values.ts`          | The dimensions and type steps as numbers, for the code that cannot read a stylesheet  |
 
 ### Values that JavaScript has to read
@@ -165,13 +165,13 @@ A plugin built before the migration compiles against `@threatmap/tailwindcss`, w
 
 Five sheets carry it, and none of them is part of the design system. Nothing in this package or in the application may read a name or a class they define.
 
-| File | Holds |
-| ---- | ----- |
-| `__generated__/plugin-compat.css` | The legacy colour names, one value each, held across both appearances |
-| `__generated__/plugin-primevue.css` | The `--p-` names, scoped to `.c-wrapper-body` and `.c-wrapper-topbar` |
-| `vendor/plugin-utilities.css` | The utility classes the application used to emit, generated once with tailwindcss 3.4.13 over the presets plugins bundle |
-| `vendor/plugin-light.css` | The light appearance, mapped per property |
-| `vendor/plugin-light-important.css` | The important half of the same, for the first layer |
+| File                                | Holds                                                                                                                    |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `__generated__/plugin-compat.css`   | The legacy colour names, one value each, held across both appearances                                                    |
+| `__generated__/plugin-primevue.css` | The `--p-` names, scoped to `.c-wrapper-body` and `.c-wrapper-topbar`                                                    |
+| `vendor/plugin-utilities.css`       | The utility classes the application used to emit, generated once with tailwindcss 3.4.13 over the presets plugins bundle |
+| `vendor/plugin-light.css`           | The light appearance, mapped per property                                                                                |
+| `vendor/plugin-light-important.css` | The important half of the same, for the first layer                                                                      |
 
 Three things about them are not obvious.
 

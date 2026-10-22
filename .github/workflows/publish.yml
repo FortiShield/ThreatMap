@@ -67,5 +67,6 @@ jobs:
       - name: Publish selected package to npm
         env:
           PACKAGE: ${{ inputs.package }}
-        run: | # zizmor: ignore[use-trusted-publishing] Independent npm packages use NPM_PUBLISH_TOKEN
+        run:
+          | # zizmor: ignore[use-trusted-publishing] Independent npm packages use NPM_PUBLISH_TOKEN
           npm publish "$(find packages -maxdepth 3 -type d -name "$PACKAGE" | head -n1)" --access public --registry https://registry.npmjs.org

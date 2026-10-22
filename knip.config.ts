@@ -22,7 +22,11 @@ const config: KnipConfig = {
       project: ["src/**/*.ts!"],
     },
     "packages/ui/primevue": {
-      entry: ["histoire.config.ts", "src/**/*.story.vue", "src/stories/setup/**"],
+      entry: [
+        "histoire.config.ts",
+        "src/**/*.story.vue",
+        "src/stories/setup/**",
+      ],
       project: ["src/**/*.{ts,vue,css}!"],
     },
     "packages/ui/tokens": {

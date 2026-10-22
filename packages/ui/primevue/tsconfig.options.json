@@ -3,7 +3,6 @@
     "target": "esnext",
     "module": "esnext",
 
-
     "jsx": "preserve",
     "noImplicitAny": false,
     "noUncheckedIndexedAccess": true,
@@ -20,16 +19,10 @@
     "isolatedModules": true,
 
     "typeRoots": ["node_modules"],
-    "types": [
-      "vite/client"
-    ],
+    "types": ["vite/client"],
     "baseUrl": ".",
     "outDir": "./dist/types",
     "declaration": true
-
   },
-  "include": [
-    "./env.d.ts",
-  ]
+  "include": ["./env.d.ts"]
 }
-

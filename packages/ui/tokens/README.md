@@ -73,8 +73,8 @@ Semantic tokens name a job, such as the default text colour or a card border. Th
 
 ## What the package exports
 
-| Import                       | What you get                                                                                           |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Import                           | What you get                                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `@threatmap/tokens`              | The `TokenName` type, dimensions, icon sizes, layers, type steps and `resolveIcon`                     |
 | `@threatmap/tokens/tokens.css`   | Every token as a custom property, plus the Tailwind theme                                              |
 | `@threatmap/tokens/fonts.css`    | The Inter font                                                                                         |

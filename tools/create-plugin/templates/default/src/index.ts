@@ -13,5 +13,4 @@ export type { API } from "./api.js";
 export type { Events } from "./events.js";
 
 export type APIResult<T> =
-  | { kind: "Error"; error: string }
-  | { kind: "Ok"; value: T };
+  { kind: "Error"; error: string } | { kind: "Ok"; value: T };

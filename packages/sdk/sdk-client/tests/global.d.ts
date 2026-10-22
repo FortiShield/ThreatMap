@@ -15,4 +15,4 @@ declare global {
   var testProject: Project | undefined;
 }
 
-export { };
+export {};

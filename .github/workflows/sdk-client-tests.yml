@@ -3,12 +3,12 @@ name: SDK Client Tests
 on:
   push:
     branches:
-      - 'main'
+      - "main"
     paths:
-      - 'packages/sdk/sdk-client/**'
+      - "packages/sdk/sdk-client/**"
   pull_request:
     paths:
-      - 'packages/sdk/sdk-client/**'
+      - "packages/sdk/sdk-client/**"
 
 concurrency:
   group: sdk-client-tests-${{ github.ref_name }}

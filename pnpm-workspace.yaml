@@ -1,17 +1,17 @@
 allowBuilds:
-  '@fortawesome/fontawesome-free': false
+  "@fortawesome/fontawesome-free": false
   esbuild: true
 minimumReleaseAge: 7200
 minimumReleaseAgeExclude:
-  - '@threatmap/quickjs-types'
-  - '@threatmap/server-auth'
-  - '@threatmap/schema-proxy'
-  - '@threatmap/sdk-shared'
-  - '@threatmap/quickssrf'
+  - "@threatmap/quickjs-types"
+  - "@threatmap/server-auth"
+  - "@threatmap/schema-proxy"
+  - "@threatmap/sdk-shared"
+  - "@threatmap/quickssrf"
 packages:
-  - 'packages/*/*'
-  - 'packages/server/server-auth/examples/*'
-  - 'packages/sdk/sdk-client/examples/*'
-  - 'tools/eslint-config'
-  - 'tools/create-plugin'
-  - 'tools/burp2threatmap'
+  - "packages/*/*"
+  - "packages/server/server-auth/examples/*"
+  - "packages/sdk/sdk-client/examples/*"
+  - "tools/eslint-config"
+  - "tools/create-plugin"
+  - "tools/burp2threatmap"

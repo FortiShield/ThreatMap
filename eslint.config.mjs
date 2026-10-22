@@ -18,41 +18,41 @@ export default [
     name: "SDK Frontend",
     ignores: [
       "packages/sdk/sdk-frontend/src/index.js",
-      "packages/sdk/sdk-frontend/src/types/**"
-    ]
+      "packages/sdk/sdk-frontend/src/types/**",
+    ],
   },
   {
     name: "QuickJS",
     ignores: [
       "packages/sdk/quickjs-types/src/llrt/**",
-      "packages/sdk/quickjs-types/src/extra/**"
-    ]
+      "packages/sdk/quickjs-types/src/extra/**",
+    ],
   },
   {
     name: "SDK Client",
     ignores: [
       "packages/sdk/sdk-client/src/transport/**/__generated__/**",
-      "packages/sdk/sdk-client/src/rest/__generated__/**"
-    ]
+      "packages/sdk/sdk-client/src/rest/__generated__/**",
+    ],
   },
   {
     name: "PrimeVue Theme Presets",
     files: ["packages/ui/primevue/src/classic/**"],
     rules: {
       eqeqeq: "off",
-      "@typescript-eslint/strict-boolean-expressions": "off"
-    }
+      "@typescript-eslint/strict-boolean-expressions": "off",
+    },
   },
   {
     name: "PrimeVue Stories",
     files: ["packages/ui/primevue/src/stories/**"],
     languageOptions: {
       globals: {
-        console: "readonly"
-      }
+        console: "readonly",
+      },
     },
     rules: {
-      "vue/define-props-destructuring": "off"
-    }
-  }
+      "vue/define-props-destructuring": "off",
+    },
+  },
 ];
