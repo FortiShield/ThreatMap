@@ -9,7 +9,8 @@
     "knip": "knip",
     "create-plugin": "node tools/create-plugin/dist/index.mjs",
     "generate:doc": "pnpm -r generate:doc",
-    "dev": "pnpm --filter @threatmap/devtools dev"
+    "dev": "pnpm --filter @threatmap/devtools dev",
+    "dev:toolkit": "pnpm --filter @threatmap/dev dev"
   },
   "engines": {
     "node": ">=20",

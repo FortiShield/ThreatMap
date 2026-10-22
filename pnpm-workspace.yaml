@@ -15,3 +15,4 @@ packages:
   - "tools/eslint-config"
   - "tools/create-plugin"
   - "tools/burp2threatmap"
+  - "tools/dev"
