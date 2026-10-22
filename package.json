@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "lint": "eslint \"packages/**/src/**/*.{ts,vue,js}\" --fix",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm -r build && pnpm -r typecheck",
     "knip": "knip",
     "create-plugin": "node tools/create-plugin/dist/index.mjs",
     "generate:doc": "pnpm -r generate:doc"
