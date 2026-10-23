@@ -11,6 +11,25 @@ type DevtoolsAPI = {
   clearLogs: () => void;
 };
 
+type WorkflowCatalogEntry = {
+  manifestId: string;
+  name?: string | null;
+  description?: string | null;
+  version: string;
+  quality?: string;
+  downloads?: number;
+  official?: boolean;
+  license?: string;
+  repository?: string;
+  readmeUrl?: string | null;
+  changelogUrl?: string | null;
+  author?: {
+    name?: string | null;
+    email?: string | null;
+    url?: string | null;
+  } | null;
+};
+
 const getDownloadUrl = (
   originalUrl: string,
   serverUrl: string | undefined,
@@ -60,11 +79,15 @@ export const init = async (sdk: API<DevtoolsAPI, Events>): Promise<void> => {
   restoreNavigationCheckbox.id = "devtools-restore-navigation";
   restoreNavigationCheckbox.type = "checkbox";
 
+  const workflowsContainer = document.createElement("div");
+  workflowsContainer.id = "devtools-workflows";
+
   container.appendChild(serverUrlInput);
   container.appendChild(connectButton);
   container.appendChild(logsTextarea);
   container.appendChild(forceUninstallCheckbox);
   container.appendChild(restoreNavigationCheckbox);
+  container.appendChild(workflowsContainer);
   root.appendChild(container);
 
   sdk.navigation.addPage("/devtools", { body: root });
@@ -75,6 +98,39 @@ export const init = async (sdk: API<DevtoolsAPI, Events>): Promise<void> => {
 
   const settings: Settings = await sdk.backend.getSettings();
   const logsList: Log[] = await sdk.backend.getLogs();
+  const workflows: WorkflowCatalogEntry[] = [];
+
+  const renderWorkflows = (): void => {
+    workflowsContainer.innerHTML = "";
+    for (const workflow of workflows) {
+      const installButton = document.createElement("button");
+      installButton.id = `devtools-install-${workflow.manifestId}`;
+      installButton.textContent = `Install ${workflow.name ?? workflow.manifestId}`;
+      installButton.addEventListener("click", () => {
+        void onInstallWorkflow(workflow);
+      });
+      workflowsContainer.appendChild(installButton);
+    }
+  };
+
+  const onInstallWorkflow = async (
+    workflow: WorkflowCatalogEntry,
+  ): Promise<void> => {
+    const result = await sdk.graphql.installPluginPackages({
+      input: { sources: [{ manifestId: workflow.manifestId }] },
+    });
+
+    const packageId = result.installPluginPackages.packages[0]?.id;
+    if (packageId === undefined) {
+      addLog("Devtools", "Failed to install workflow");
+      return;
+    }
+
+    const newSettings: Settings = { ...settings, packageId };
+    settings.packageId = packageId;
+    await sdk.backend.setSettings(newSettings);
+    window.location.reload();
+  };
 
   const renderLogs = (): void => {
     logsTextarea.value = logsList
@@ -91,6 +147,18 @@ export const init = async (sdk: API<DevtoolsAPI, Events>): Promise<void> => {
     logsList.push(log);
     renderLogs();
   };
+
+  const fetchWorkflows = async (): Promise<void> => {
+    const result = await sdk.graphql.storePluginPackages({});
+    workflows.length = 0;
+    for (const workflow of result.store.pluginPackages) {
+      workflows.push(workflow);
+    }
+    renderWorkflows();
+  };
+
+  await fetchWorkflows();
+  renderLogs();
 
   const install = async (downloadUrl: string): Promise<string | undefined> => {
     const effectiveUrl = getDownloadUrl(downloadUrl, settings.serverUrl);
