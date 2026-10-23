@@ -1,0 +1,23 @@
+{
+  "name": "@threatmap/frontend-utils",
+  "version": "0.1.0",
+  "description": "Utilities for Threatmap plugin development",
+  "author": "ThreatCode <dev@khulnasoft.com>",
+  "repository": "https://github.com/threatcode/threatmap/",
+  "license": "MIT",
+  "type": "module",
+  "types": "./src/index.d.ts",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "files": [
+    "src/*"
+  ],
+  "scripts": {
+    "build": "echo 'No build step required for @threatmap/frontend-utils'",
+    "typecheck": "tsc --noEmit",
+    "generate:doc": "typedoc"
+  },
+  "dependencies": {
+    "@threatmap/sdk-frontend": "workspace:*"
+  }
+}
