@@ -1,0 +1,216 @@
+name: Validate Plugin
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull Request number to validate"
+        required: true
+        type: string
+      plugin_id:
+        description: "ID of the plugin to validate"
+        required: true
+        type: string
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+
+      - name: Prepare PR branch
+        uses: actions/checkout@v4
+        with:
+          path: pr
+
+      - name: Checkout PR
+        working-directory: pr
+        run: gh pr checkout ${{ inputs.pr_number }}
+
+      - name: Get plugin entry and validate repository
+        id: unsafe-plugin-info
+        working-directory: pr
+        run: |
+          # Get plugin entry
+          PLUGIN_ID="${{ inputs.plugin_id }}"
+          PLUGIN_ENTRY=$(jq -r --arg id "$PLUGIN_ID" '.[] | select(.id == $id)' plugin_packages.json)
+
+          if [ -z "$PLUGIN_ENTRY" ]; then
+            echo "Error: Plugin with ID '$PLUGIN_ID' not found in plugin_packages.json"
+            exit 1
+          fi
+
+          # Extract and validate repository info
+          PLUGIN_REPO=$(echo "$PLUGIN_ENTRY" | jq -r '.repository')
+          PLUGIN_OWNER=$(echo $PLUGIN_REPO | cut -d'/' -f1)
+          PLUGIN_REPO_NAME=$(echo $PLUGIN_REPO | cut -d'/' -f2)
+
+          # Validate owner and repo names
+          if ! [[ "$PLUGIN_OWNER" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]*$ ]] || ! [[ "$PLUGIN_REPO_NAME" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]]; then
+            echo "Error: Invalid repository format: $PLUGIN_REPO"
+            exit 1
+          fi
+
+          # Extract all needed plugin info
+          PLUGIN_NAME=$(echo "$PLUGIN_ENTRY" | jq -r '.name')
+          PLUGIN_PUBLIC_KEY=$(echo "$PLUGIN_ENTRY" | jq -r '.public_key')
+
+          # Validate extracted fields
+          if [ -z "$PLUGIN_NAME" ] || [ "$PLUGIN_NAME" = "null" ]; then
+            echo "Error: Plugin name is missing or invalid"
+            exit 1
+          fi
+
+          # Validate plugin name format
+          if ! [[ "$PLUGIN_NAME" =~ ^[a-zA-Z0-9._+\ -]*$ ]]; then
+            echo "Error: Invalid plugin name format: $PLUGIN_NAME"
+            exit 1
+          fi
+
+          # Validate plugin ID format
+          if ! [[ "$PLUGIN_ID" =~ ^[a-zA-Z0-9._-]*$ ]]; then
+            echo "Error: Invalid plugin ID format: $PLUGIN_ID"
+            exit 1
+          fi
+
+          # Validate public key format
+          if ! [[ "$PLUGIN_PUBLIC_KEY" =~ ^[a-zA-Z0-9/+=]+$ ]]; then
+            echo "Error: Invalid public key format: $PLUGIN_PUBLIC_KEY"
+            exit 1
+          fi
+
+          # Output validated repository info with plugin_ prefix
+          echo "plugin_owner=$PLUGIN_OWNER" >> $GITHUB_OUTPUT
+          echo "plugin_repo=$PLUGIN_REPO_NAME" >> $GITHUB_OUTPUT
+
+          # Output extracted plugin info
+          echo "plugin_name=$PLUGIN_NAME" >> $GITHUB_OUTPUT
+          echo "plugin_id=$PLUGIN_ID" >> $GITHUB_OUTPUT
+          echo "public_key<<EOF" >> $GITHUB_OUTPUT
+          echo "$PLUGIN_PUBLIC_KEY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Get latest release
+        id: release
+        run: |
+          # Get latest release info using gh CLI with proper escaping
+          RELEASE_JSON=$(gh api "repos/${{ steps.unsafe-plugin-info.outputs.plugin_owner }}/${{ steps.unsafe-plugin-info.outputs.plugin_repo }}/releases/latest")
+          TAG_NAME=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
+
+          # Check that release is immutable
+          IS_IMMUTABLE=$(echo "$RELEASE_JSON" | jq -r '.immutable')
+          if [ "$IS_IMMUTABLE" != "true" ]; then
+            echo "Error: Latest release is not immutable. Only immutable releases are allowed."
+            exit 1
+          fi
+
+          # Find required assets
+          PLUGIN_PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name == "plugin_package.zip") | .browser_download_url')
+          SIGNATURE_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name == "plugin_package.zip.sig") | .browser_download_url')
+
+          if [ -z "$PLUGIN_PACKAGE_URL" ] || [ -z "$SIGNATURE_URL" ]; then
+            echo "Error: Required assets not found in release. Need plugin_package.zip and plugin_package.zip.sig"
+            exit 1
+          fi
+
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "plugin_package_url=$PLUGIN_PACKAGE_URL" >> $GITHUB_OUTPUT
+          echo "signature_url=$SIGNATURE_URL" >> $GITHUB_OUTPUT
+
+      - name: Download release artifacts
+        working-directory: pr
+        run: |
+          mkdir -p artifacts
+          cd artifacts
+          # Download plugin package
+          curl -L -o plugin_package.zip "${{ steps.release.outputs.plugin_package_url }}"
+          # Download signature
+          curl -L -o plugin_package.zip.sig "${{ steps.release.outputs.signature_url }}"
+
+      - name: Validate signature
+        id: sig-validation
+        working-directory: main
+        run: |
+          if ./scripts/validate-signature.sh ../pr/artifacts/plugin_package.zip ../pr/artifacts/plugin_package.zip.sig "${{ steps.unsafe-plugin-info.outputs.public_key }}"; then
+            echo "signature_valid=true" >> $GITHUB_OUTPUT
+          else
+            echo "signature_valid=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate manifest ID
+        id: manifest-validation-id
+        working-directory: main
+        run: |
+          MANIFEST=$(unzip -p ../pr/artifacts/plugin_package.zip manifest.json)
+          MANIFEST_ID=$(echo "$MANIFEST" | jq -r '.id')
+          if [ "$MANIFEST_ID" != "${{ steps.unsafe-plugin-info.outputs.plugin_id }}" ]; then
+            echo "is_valid=false" >> $GITHUB_OUTPUT
+          else
+            echo "is_valid=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate manifest version
+        id: manifest-validation-version
+        working-directory: main
+        run: |
+          MANIFEST=$(unzip -p ../pr/artifacts/plugin_package.zip manifest.json)
+          MANIFEST_VERSION=$(echo "$MANIFEST" | jq -r '.version')
+          RELEASE_TAG="${{ steps.release.outputs.tag_name }}"
+          RELEASE_VERSION="${RELEASE_TAG#v}"
+          if [ "$MANIFEST_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "is_valid=false" >> $GITHUB_OUTPUT
+          else
+            echo "is_valid=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for README in plugin repository
+        id: readme-check
+        run: |
+          if gh api "repos/${{ steps.unsafe-plugin-info.outputs.plugin_owner }}/${{ steps.unsafe-plugin-info.outputs.plugin_repo }}/contents/README.md" --jq .sha > /dev/null 2>&1; then
+            echo "has_readme=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_readme=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check required artifacts
+        id: artifacts-check
+        working-directory: pr
+        run: |
+          if [ -f "artifacts/plugin_package.zip" ] && [ -f "artifacts/plugin_package.zip.sig" ]; then
+            echo "has_required_artifacts=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_required_artifacts=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate validation results comment
+        id: generate-comment
+        working-directory: main
+        run: |
+          # Generate the comment using the script
+          COMMENT=$(./scripts/generate-results.sh \
+            "${{ steps.unsafe-plugin-info.outputs.plugin_name }}" \
+            "${{ steps.release.outputs.tag_name }}" \
+            "${{ steps.unsafe-plugin-info.outputs.plugin_owner }}" \
+            "${{ steps.unsafe-plugin-info.outputs.plugin_repo }}" \
+            "${{ steps.manifest-validation-id.outputs.is_valid }}" \
+            "${{ steps.manifest-validation-version.outputs.is_valid }}" \
+            "${{ steps.readme-check.outputs.has_readme }}" \
+            "${{ steps.artifacts-check.outputs.has_required_artifacts }}" \
+            "${{ steps.sig-validation.outputs.signature_valid }}")
+
+          # Output the comment
+          echo "comment<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR
+        working-directory: main
+        run: |
+          # Post comment using gh CLI
+          echo "${{ steps.generate-comment.outputs.comment }}" | gh pr comment ${{ inputs.pr_number }} --body-file -
