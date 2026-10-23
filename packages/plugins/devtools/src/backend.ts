@@ -12,6 +12,9 @@ const settings: Settings = {
   packageId: undefined,
   forceUninstall: false,
   restoreNavigation: true,
+  customFont: "Default",
+  quickDecode: true,
+  quickMar: true,
 };
 
 const logs: Log[] = [];

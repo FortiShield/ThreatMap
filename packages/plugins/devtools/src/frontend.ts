@@ -1,34 +1,10 @@
 import type { API } from "@threatmap/sdk-frontend";
 
-import type { Log, Settings } from "./api.js";
+import type { DevtoolsAPI, Log, Settings } from "./api.js";
 import type { Events } from "./events.js";
-
-type DevtoolsAPI = {
-  setSettings: (settings: Settings) => void;
-  getSettings: () => Settings;
-  addLog: (log: Log) => void;
-  getLogs: () => Log[];
-  clearLogs: () => void;
-};
-
-type WorkflowCatalogEntry = {
-  manifestId: string;
-  name?: string | null;
-  description?: string | null;
-  version: string;
-  quality?: string;
-  downloads?: number;
-  official?: boolean;
-  license?: string;
-  repository?: string;
-  readmeUrl?: string | null;
-  changelogUrl?: string | null;
-  author?: {
-    name?: string | null;
-    email?: string | null;
-    url?: string | null;
-  } | null;
-};
+import { loadFont } from "./fonts.js";
+import { QuickDecodeManager } from "./quick-decode.js";
+import { initQuickMar, setQuickMarEnabled } from "./quick-mar.js";
 
 const getDownloadUrl = (
   originalUrl: string,
@@ -49,6 +25,13 @@ const getDownloadUrl = (
 
 const toWebSocketUrl = (serverUrl: string): string => {
   return serverUrl.replace(/^http/, "ws");
+};
+
+const createFontOption = (name: string): HTMLOptionElement => {
+  const option = document.createElement("option");
+  option.value = name;
+  option.textContent = name;
+  return option;
 };
 
 export const init = async (sdk: API<DevtoolsAPI, Events>): Promise<void> => {
@@ -79,6 +62,24 @@ export const init = async (sdk: API<DevtoolsAPI, Events>): Promise<void> => {
   restoreNavigationCheckbox.id = "devtools-restore-navigation";
   restoreNavigationCheckbox.type = "checkbox";
 
+  const fontSelect = document.createElement("select");
+  fontSelect.id = "devtools-font";
+  fontSelect.appendChild(createFontOption("Default"));
+  fontSelect.appendChild(createFontOption("JetBrains Mono"));
+  fontSelect.appendChild(createFontOption("Fira Code"));
+  fontSelect.appendChild(createFontOption("Roboto Mono"));
+  fontSelect.appendChild(createFontOption("Inconsolata"));
+
+  const quickDecodeToggle = document.createElement("input");
+  quickDecodeToggle.id = "devtools-quick-decode";
+  quickDecodeToggle.type = "checkbox";
+  quickDecodeToggle.checked = true;
+
+  const quickMarToggle = document.createElement("input");
+  quickMarToggle.id = "devtools-quick-mar";
+  quickMarToggle.type = "checkbox";
+  quickMarToggle.checked = true;
+
   const workflowsContainer = document.createElement("div");
   workflowsContainer.id = "devtools-workflows";
 
@@ -87,6 +88,9 @@ export const init = async (sdk: API<DevtoolsAPI, Events>): Promise<void> => {
   container.appendChild(logsTextarea);
   container.appendChild(forceUninstallCheckbox);
   container.appendChild(restoreNavigationCheckbox);
+  container.appendChild(fontSelect);
+  container.appendChild(quickDecodeToggle);
+  container.appendChild(quickMarToggle);
   container.appendChild(workflowsContainer);
   root.appendChild(container);
 
@@ -98,39 +102,15 @@ export const init = async (sdk: API<DevtoolsAPI, Events>): Promise<void> => {
 
   const settings: Settings = await sdk.backend.getSettings();
   const logsList: Log[] = await sdk.backend.getLogs();
-  const workflows: WorkflowCatalogEntry[] = [];
 
-  const renderWorkflows = (): void => {
-    workflowsContainer.innerHTML = "";
-    for (const workflow of workflows) {
-      const installButton = document.createElement("button");
-      installButton.id = `devtools-install-${workflow.manifestId}`;
-      installButton.textContent = `Install ${workflow.name ?? workflow.manifestId}`;
-      installButton.addEventListener("click", () => {
-        void onInstallWorkflow(workflow);
-      });
-      workflowsContainer.appendChild(installButton);
-    }
+  const quickDecodeManager = new QuickDecodeManager(sdk);
+
+  const syncQuickDecode = (): void => {
+    quickDecodeManager.setEnabled(settings.quickDecode);
   };
 
-  const onInstallWorkflow = async (
-    workflow: WorkflowCatalogEntry,
-  ): Promise<void> => {
-    const result = await sdk.graphql.installPluginPackages({
-      input: { sources: [{ manifestId: workflow.manifestId }] },
-    });
-
-    const packageId = result.installPluginPackages.packages[0]?.id;
-    if (packageId === undefined) {
-      addLog("Devtools", "Failed to install workflow");
-      return;
-    }
-
-    const newSettings: Settings = { ...settings, packageId };
-    settings.packageId = packageId;
-    await sdk.backend.setSettings(newSettings);
-    window.location.reload();
-  };
+  quickDecodeManager.init();
+  syncQuickDecode();
 
   const renderLogs = (): void => {
     logsTextarea.value = logsList
@@ -150,11 +130,58 @@ export const init = async (sdk: API<DevtoolsAPI, Events>): Promise<void> => {
 
   const fetchWorkflows = async (): Promise<void> => {
     const result = await sdk.graphql.storePluginPackages({});
-    workflows.length = 0;
+    workflowsContainer.innerHTML = "";
     for (const workflow of result.store.pluginPackages) {
-      workflows.push(workflow);
+      const installButton = document.createElement("button");
+      installButton.id = `devtools-install-${workflow.manifestId}`;
+      installButton.textContent = `Install ${workflow.name ?? workflow.manifestId}`;
+      installButton.addEventListener("click", () => {
+        void installWorkflow(workflow);
+      });
+      workflowsContainer.appendChild(installButton);
     }
-    renderWorkflows();
+  };
+
+  const installWorkflow = async (workflow: {
+    manifestId: string;
+    name?: string | null;
+    description?: string | null;
+    version: string;
+    quality?: string;
+    downloads?: number;
+    official?: boolean;
+    license?: string;
+    repository?: string;
+    readmeUrl?: string | null;
+    changelogUrl?: string | null;
+    author?: {
+      name?: string | null;
+      email?: string | null;
+      url?: string | null;
+    } | null;
+  }): Promise<void> => {
+    const result = await sdk.graphql.installPluginPackages({
+      input: { sources: [{ manifestId: workflow.manifestId }] },
+    });
+
+    const packageId = result.installPluginPackages.packages[0]?.id;
+    if (packageId === undefined) {
+      addLog("Devtools", "Failed to install workflow");
+      return;
+    }
+
+    const newSettings: Settings = { ...settings, packageId };
+    settings.packageId = packageId;
+    await sdk.backend.setSettings(newSettings);
+
+    if (settings.restoreNavigation) {
+      const currentPath = window.location.hash.substring(1);
+      if (currentPath) {
+        window.localStorage.setItem("devtools_navigation_restore", currentPath);
+      }
+    }
+
+    window.location.reload();
   };
 
   await fetchWorkflows();
@@ -307,5 +334,34 @@ export const init = async (sdk: API<DevtoolsAPI, Events>): Promise<void> => {
     void sdk.backend.setSettings(newSettings);
   });
 
+  fontSelect.addEventListener("change", () => {
+    const newSettings: Settings = { ...settings, customFont: fontSelect.value };
+    void sdk.backend.setSettings(newSettings);
+    loadFont(fontSelect.value);
+  });
+
+  quickDecodeToggle.addEventListener("change", () => {
+    const newSettings: Settings = {
+      ...settings,
+      quickDecode: quickDecodeToggle.checked,
+    };
+    void sdk.backend.setSettings(newSettings);
+    quickDecodeManager.setEnabled(quickDecodeToggle.checked);
+  });
+
+  quickMarToggle.addEventListener("change", () => {
+    setQuickMarEnabled(quickMarToggle.checked);
+    const newSettings: Settings = {
+      ...settings,
+      quickMar: quickMarToggle.checked,
+    };
+    void sdk.backend.setSettings(newSettings);
+  });
+
+  initQuickMar(sdk);
+
+  quickDecodeManager.init();
+  quickDecodeManager.setEnabled(settings.quickDecode);
+  loadFont(settings.customFont);
   renderLogs();
 };

@@ -3,6 +3,9 @@ export type Settings = {
   packageId: string | undefined;
   forceUninstall: boolean;
   restoreNavigation: boolean;
+  customFont: string;
+  quickDecode: boolean;
+  quickMar: boolean;
 };
 
 export type Log = {
@@ -10,6 +13,14 @@ export type Log = {
   origin: string;
   timestamp: number;
   message: string;
+};
+
+export type DevtoolsAPI = {
+  setSettings: (settings: Settings) => void;
+  getSettings: () => Settings;
+  addLog: (log: Log) => void;
+  getLogs: () => Log[];
+  clearLogs: () => void;
 };
 
 export type API = {
