@@ -10,6 +10,15 @@ This is the monorepo for all the JS SDK and related tooling of Threatmap. It con
 - `quickjs-types`: Typing for the QuickJS Engine
 - `server-auth`: Client to authenticate with a Threatmap Instance
 
+The `crates/` Rust workspace contains the emerging scanner core. Its initial
+passive implementation analyzes captured HTTP exchanges locally and does not
+send requests to targets. The built-in checks currently cover
+`X-Content-Type-Options`, HTTPS `Strict-Transport-Security`, frame protections
+(`X-Frame-Options` or CSP `frame-ancestors`), and `Referrer-Policy`. Run its
+tests with `cargo test --workspace`. The scan engine also provides incremental
+passive sessions with progress tracking and cancellation between captured
+exchanges.
+
 ## Creating a new plugin
 
 Run `pnpm --filter @threatmap/create-plugin build` once, then:

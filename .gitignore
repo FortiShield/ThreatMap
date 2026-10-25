@@ -2,6 +2,7 @@ node_modules/
 **/docs/*
 !**/docs/adr
 dist/
+/target/
 .secrets.json
 .agents
 .claude
