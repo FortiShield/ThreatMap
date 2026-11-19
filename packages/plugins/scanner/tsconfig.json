@@ -1,8 +1,18 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
-    "types": ["@threatmap/sdk-backend"]
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "types": [
+      "@threatmap/sdk-backend"
+    ],
+    "isolatedDeclarations": false
   },
-  "include": ["./src/**/*.ts"]
+  "include": [
+    "./src/**/*.ts",
+    "./backend/src/**/*.ts",
+    "./frontend/src/**/*.ts"
+  ]
 }
