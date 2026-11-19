@@ -1,0 +1,102 @@
+name: Publish Docker images to Docker Hub
+
+on:
+  release:
+    types: [published]
+
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Immutable vX.Y.Z or vX.Y.Z-rc.N tag (defaults to main)
+        required: false
+        type: string
+      dry-run:
+        description: Build images without publishing
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-registry-channels
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run || false }}
+      DOCKER_REF: ${{ github.event.release.tag_name || inputs.ref || 'main' }}
+      DOCKER_REPO: threatcode/threatmap
+      PLATFORMS: linux/amd64,linux/arm64
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ env.DOCKER_REF }}
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+
+      - name: Validate ref and set image tags
+        id: vars
+        run: |
+          REF="${DOCKER_REF}"
+
+          if [[ "$REF" == "main" ]]; then
+            echo "version=main" >> "$GITHUB_OUTPUT"
+            echo "tag=main" >> "$GITHUB_OUTPUT"
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "Using main branch"
+            exit 0
+          fi
+
+          if [[ ! "$REF" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(-rc\.[0-9]+)?$ ]]; then
+            echo "Unsupported Docker release ref: $REF" >&2
+            exit 1
+          fi
+
+          version="${REF#v}"
+          if [[ "$REF" == *-rc.* ]]; then
+            tag="beta"
+            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            tag="latest"
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU for multi-platform builds
+        if: env.DRY_RUN != 'true'
+        uses: docker/setup-qemu-action@68837a375e18921b793e86c1c6b118382d86f031 # v3.2.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@3103f219095e0a54798f88893125d7356fc0d424 # v3.10.0
+
+      - name: Log in to Docker Hub
+        if: env.DRY_RUN != 'true'
+        uses: docker/login-action@64947cdb2465de56360b4fe3cf274921c7ce5055 # v3.4.0
+        with:
+          username: ${{ vars.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        id: docker_build
+        uses: docker/build-push-action@822599193b0bb492ed59194b5209225a824c22fa # v6.11.0
+        with:
+          context: .
+          file: docker/Dockerfile.full
+          platforms: ${{ env.PLATFORMS }}
+          push: ${{ env.DRY_RUN != 'true' }}
+          tags: |
+            ${{ env.DOCKER_REPO }}:${{ steps.vars.outputs.tag }}
+            ${{ env.DOCKER_REPO }}:${{ steps.vars.outputs.version }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REPO }}:cache
+          cache-to: type=registry,ref=${{ env.DOCKER_REPO }}:cache,mode=max

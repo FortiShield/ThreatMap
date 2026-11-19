@@ -1,7 +1,14 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "isolatedDeclarations": false
+    "isolatedDeclarations": false,
+    "types": [
+      "@threatmap/sdk-backend"
+    ]
   },
-  "include": ["./src/**/*.ts"]
+  "include": [
+    "./src/**/*.ts",
+    "./backend/src/**/*.ts",
+    "./frontend/src/**/*.ts"
+  ]
 }

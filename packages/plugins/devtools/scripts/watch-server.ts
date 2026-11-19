@@ -6,6 +6,7 @@ import {
   type ServerResponse,
 } from "node:http";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { watch as chokidarWatch } from "chokidar";
 import JSZip from "jszip";
@@ -29,9 +30,16 @@ type ErrorMessage = {
 
 const DEFAULT_PORT = 3000;
 
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+  "..",
+  "..",
+);
 const pluginDirArg = process.argv[2] ?? "packages/plugins/tor";
 const port = Number(process.argv[3] ?? DEFAULT_PORT);
-const pluginDir = path.resolve(process.cwd(), pluginDirArg);
+const pluginDir = path.resolve(repoRoot, pluginDirArg);
 const packageId = path.basename(pluginDir);
 const downloadUrl = `http://localhost:${port}/plugin_package.zip`;
 

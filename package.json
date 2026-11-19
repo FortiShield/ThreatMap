@@ -1,5 +1,5 @@
 {
-  "name": "@threatmap/threatmap",
+  "name": "threatmap-repo",
   "private": true,
   "scripts": {
     "lint": "eslint \"packages/**/src/**/*.{ts,vue,js}\" --fix",

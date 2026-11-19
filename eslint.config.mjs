@@ -55,4 +55,14 @@ export default [
       "vue/define-props-destructuring": "off",
     },
   },
+  {
+    name: "ThreatMap Dashboard",
+    files: ["packages/ui/dashboard/src/**"],
+    languageOptions: {
+      globals: {
+        document: "readonly",
+        globalThis: "readonly",
+      },
+    },
+  },
 ];

@@ -21,7 +21,7 @@ jobs:
       - name: Checkout threatmap
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
-          repository: threatmap/threatmap
+          repository: threatcode/threatmap
           ref: ${{ env.THREATMAP_REF }}
           path: ./threatmap
           token: ${{ env.THREATMAP_GITHUB_TOKEN }}

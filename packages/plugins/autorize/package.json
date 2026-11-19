@@ -12,6 +12,21 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs",
       "default": "./dist/index.mjs"
+    },
+    "./ui": {
+      "types": "./dist/ui/index.d.mts",
+      "import": "./dist/ui/index.mjs",
+      "default": "./dist/ui/index.mjs"
+    },
+    "./backend": {
+      "types": "./dist/backend/index.d.mts",
+      "import": "./dist/backend/index.mjs",
+      "default": "./dist/backend/index.mjs"
+    },
+    "./frontend": {
+      "types": "./dist/frontend/index.d.mts",
+      "import": "./dist/frontend/index.mjs",
+      "default": "./dist/frontend/index.mjs"
     }
   },
   "files": [
@@ -24,7 +39,11 @@
   },
   "dependencies": {
     "@threatmap/sdk-shared": "workspace:*",
-    "zod": "4.1.12"
+    "zod": "4.1.12",
+    "@threatmap/sdk-frontend": "workspace:*",
+    "primevue": "4.1.0",
+    "vue": "3.4.33",
+    "@threatmap/sdk-backend": "workspace:*"
   },
   "devDependencies": {
     "tsdown": "0.21.7"

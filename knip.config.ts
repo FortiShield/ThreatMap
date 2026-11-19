@@ -11,8 +11,10 @@ const config: KnipConfig = {
     "packages/sdk/sdk-workflow/**",
     "packages/ui/tokens/src/__generated__/**",
     "packages/ui/tokens/src/vendor/**",
+    "packages/plugins/*/backend/src/types.ts",
   ],
   workspaces: {
+
     "packages/sdk/sdk-client": {
       project: ["src/**/*.ts!", "tests/**/*.ts!"],
       ignore: ["src/**/__generated__/**"],
