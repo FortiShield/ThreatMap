@@ -9,7 +9,5 @@
     "skipLibCheck": true,
     "typeRoots": ["./src/vendor"]
   },
-  "include": [
-    "**/*.ts"
-  ],
+  "include": ["**/*.ts"]
 }

@@ -14,12 +14,12 @@ Some elements are similar to `Node.JS`, but some imports will be different and s
 | [buffer](llrt/buffer.md)                 | Buffers                  | `buffer`           | ✔︎      |
 | [child_process](llrt/child_process.md)   | Process spawning         | `child_process`    | ✘      |
 | [console](extra/console.md)              | Console logging          | N/A                | ✔︎      |
-| [crypto](threatmap/crypto.md)                | Cryptographic primitives | `crypto`           | ✘      |
+| [crypto](threatmap/crypto.md)            | Cryptographic primitives | `crypto`           | ✘      |
 | [dom-events](llrt/dom-events.md)         | Event Listeners          | N/A                | ✔︎      |
 | [dns](llrt/dns.md)                       | DNS                      | `dns`              | ✘      |
 | [events](llrt/events.md)                 | Event Emitter            | `events`           | ✘      |
 | [fs](llrt/fs/index.md)                   | File system              | `fs`, `fs/promise` | ✘      |
-| [http](threatmap/http.md)                    | Fetch implementation     | `threatmap:http`       | ✘      |
+| [http](threatmap/http.md)                | Fetch implementation     | `threatmap:http`   | ✘      |
 | [https](llrt/https.md)                   | HTTPS                    | `https`            | ✘      |
 | [globals](llrt/globals/index.md)         | Global classes           | N/A                | ✔︎      |
 | [net](llrt/net.md)                       | Sockets                  | `net`              | ✘      |

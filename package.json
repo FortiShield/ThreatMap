@@ -1,12 +1,16 @@
 {
-  "name": "@threatmap/threatmap",
+  "name": "threatmap-repo",
   "private": true,
   "scripts": {
     "lint": "eslint \"packages/**/src/**/*.{ts,vue,js}\" --fix",
-    "typecheck": "pnpm -r typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r build && pnpm -r typecheck",
     "knip": "knip",
     "create-plugin": "node tools/create-plugin/dist/index.mjs",
-    "generate:doc": "pnpm -r generate:doc"
+    "generate:doc": "pnpm -r generate:doc",
+    "dev": "pnpm --filter @threatmap/devtools dev",
+    "dev:toolkit": "pnpm --filter @threatmap/dev dev"
   },
   "engines": {
     "node": ">=20",
@@ -16,10 +20,11 @@
     "@threatmap/eslint-config": "workspace:*",
     "eslint": "9.39.2",
     "knip": "5.82.1",
+    "prettier": "3.9.9",
     "tsdown": "0.20.1",
-    "typescript": "5.6.2",
     "typedoc": "0.28.14",
     "typedoc-plugin-markdown": "4.9.0",
-    "typedoc-plugin-missing-exports": "4.1.2"
+    "typedoc-plugin-missing-exports": "4.1.2",
+    "typescript": "5.6.2"
   }
 }

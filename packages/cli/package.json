@@ -1,0 +1,23 @@
+{
+  "name": "@threatmap/cli",
+  "version": "0.1.0",
+  "description": "Command line interface for ThreatMap",
+  "author": "ThreatCode <dev@khulnasoft.com>",
+  "repository": "https://github.com/threatcode/threatmap/",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "threatmap": "./src/cli.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build": "echo 'No build step required for @threatmap/cli'",
+    "typecheck": "tsc --noEmit",
+    "generate:doc": "typedoc"
+  },
+  "dependencies": {
+    "@threatmap/convert": "workspace:*"
+  }
+}

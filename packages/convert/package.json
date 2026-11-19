@@ -1,0 +1,23 @@
+{
+  "name": "@threatmap/convert",
+  "version": "0.1.0",
+  "description": "Code we use to encode, hash, zip and much more",
+  "author": "ThreatCode <dev@khulnasoft.com>",
+  "repository": "https://github.com/threatcode/threatmap/",
+  "license": "MIT",
+  "type": "module",
+  "types": "./src/index.d.ts",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "files": [
+    "src/*"
+  ],
+  "scripts": {
+    "build": "echo 'No build step required for @threatmap/convert'",
+    "typecheck": "tsc --noEmit",
+    "generate:doc": "typedoc"
+  },
+  "dependencies": {
+    "jszip": "3.10.1"
+  }
+}

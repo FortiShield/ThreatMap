@@ -1,0 +1,156 @@
+[
+  {
+    "id": "autorize",
+    "name": "@threatmap/autorize",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Specification for the Autorize plugin",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  },
+  {
+    "id": "chatio",
+    "name": "@threatmap/chatio",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Specification for the ThreatMap Chatio plugin",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  },
+  {
+    "id": "compare",
+    "name": "@threatmap/compare",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Specification for the ThreatMap Compare plugin",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  },
+  {
+    "id": "devtools",
+    "name": "@threatmap/devtools",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Hot-reloading plugin for faster Threatmap plugin development",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  },
+  {
+    "id": "paramfinder",
+    "name": "@threatmap/paramfinder",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Specification for the ThreatMap ParamFinder plugin",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  },
+  {
+    "id": "quickssrf",
+    "name": "@threatmap/quickssrf",
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Specification for the QuickSSRF plugin",
+    "author": {
+      "name": "ThreatCode <dev@khulnasoft.com>",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": ""
+  },
+  {
+    "id": "saml-raider",
+    "name": "@threatmap/saml-raider",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Specification for the ThreatMap SAML Raider plugin",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  },
+  {
+    "id": "scanner",
+    "name": "@threatmap/scanner",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Specification for the ThreatMap Scanner plugin",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  },
+  {
+    "id": "shift",
+    "name": "@threatmap/shift",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Specification for the ThreatMap Shift plugin",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  },
+  {
+    "id": "themes",
+    "name": "@threatmap/themes",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Specification for the ThreatMap Themes plugin",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  },
+  {
+    "id": "tor",
+    "name": "@threatmap/tor",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "Specification for the ThreatMap Tor plugin",
+    "author": {
+      "name": "ThreatCode",
+      "email": "",
+      "url": ""
+    },
+    "public_key": "MCowBQYDK2VwAyEAtesttesttesttesttesttesttesttesttesttesttest",
+    "repository": "https://github.com/threatcode/threatmap"
+  }
+]

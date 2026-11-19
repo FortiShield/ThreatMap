@@ -98,7 +98,8 @@ jobs:
           DRY_RUN: ${{ inputs.dry-run }}
           NPM_TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN || github.token }}
           NPM_CONFIG_USERCONFIG: ${{ github.workspace }}/.npmrc.github
-        run: | # zizmor: ignore[use-trusted-publishing] GitHub Packages requires token authentication
+        run:
+          | # zizmor: ignore[use-trusted-publishing] GitHub Packages requires token authentication
           name="$(node -p "require('./$(find packages -maxdepth 3 -type d -name "$PACKAGE" | head -n1)/package.json').name")"
           version="$(node -p "require('./$(find packages -maxdepth 3 -type d -name "$PACKAGE" | head -n1)/package.json').version")"
           if [[ "$DRY_RUN" != "true" ]]; then

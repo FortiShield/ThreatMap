@@ -3,7 +3,7 @@ name: Documentation
 on:
   push:
     branches:
-      - 'main'
+      - "main"
 
 env:
   THREATMAP_REF: ${{ github.ref }}
@@ -70,4 +70,4 @@ jobs:
           delete-branch: true
           base: main
           title: Update SDK Documentation
-          body: ''
+          body: ""

@@ -10,6 +10,15 @@ This is the monorepo for all the JS SDK and related tooling of Threatmap. It con
 - `quickjs-types`: Typing for the QuickJS Engine
 - `server-auth`: Client to authenticate with a Threatmap Instance
 
+The `crates/` Rust workspace contains the emerging scanner core. Its initial
+passive implementation analyzes captured HTTP exchanges locally and does not
+send requests to targets. The built-in checks currently cover
+`X-Content-Type-Options`, HTTPS `Strict-Transport-Security`, frame protections
+(`X-Frame-Options` or CSP `frame-ancestors`), and `Referrer-Policy`. Run its
+tests with `cargo test --workspace`. The scan engine also provides incremental
+passive sessions with progress tracking and cancellation between captured
+exchanges.
+
 ## Creating a new plugin
 
 Run `pnpm --filter @threatmap/create-plugin build` once, then:
@@ -26,9 +35,9 @@ SDK releases are not published from branch pushes. The three product-coupled pac
 
 Independently versioned packages are released through `release-independent.yml`. It creates the selected package's `<package>-vX.Y.Z` tag and GitHub Release, then starts separate npm and GitHub Packages publishing jobs. npm uses `NPM_PUBLISH_TOKEN`. GitHub Packages uses `GITHUB_PACKAGES_TOKEN` when configured, otherwise the workflow's `GITHUB_TOKEN` with package write permission.
 
-| GitHub Packages workflow | Packages | Manual inputs |
-| --- | --- | --- |
-| `publish-github.yml` | One of quickjs-types, sdk-shared, server-auth, sdk-client | `package`, immutable package `ref`, `dry-run` |
-| `publish-release-github.yml` | sdk-backend, sdk-frontend, sdk-workflow | Immutable `vX.Y.Z[-rc.N]` `ref`, `dry-run` |
+| GitHub Packages workflow     | Packages                                                  | Manual inputs                                 |
+| ---------------------------- | --------------------------------------------------------- | --------------------------------------------- |
+| `publish-github.yml`         | One of quickjs-types, sdk-shared, server-auth, sdk-client | `package`, immutable package `ref`, `dry-run` |
+| `publish-release-github.yml` | sdk-backend, sdk-frontend, sdk-workflow                   | Immutable `vX.Y.Z[-rc.N]` `ref`, `dry-run`    |
 
 Both GitHub Packages workflows support manual dispatch, defaulting to a dry run. Retry a failed publisher with the same tag; already-published versions are skipped on GitHub Packages. RCs use the `beta` dist-tag and stable releases use `latest`. The registries have separate publication queues, with up to 100 pending runs per queue.

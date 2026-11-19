@@ -1,0 +1,36 @@
+{
+  "name": "@threatmap/dev",
+  "version": "0.0.0",
+  "description": "Development toolkit for building Threatmap plugins",
+  "author": "ThreatCode",
+  "repository": {
+    "url": "https://github.com/threatcode/threatmap",
+    "directory": "tools/dev"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "threatmap-dev": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "25.0.10",
+    "@types/ws": "8.18.0",
+    "chokidar": "4.0.3",
+    "commander": "13.0.0",
+    "jszip": "3.10.1",
+    "tsup": "8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "5.6.2",
+    "vitest": "4.0.8",
+    "ws": "8.18.0"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "name": "@threatmap/devtools",
+  "version": "0.0.0",
+  "description": "Hot-reloading plugin for faster Threatmap plugin development",
+  "author": "ThreatCode",
+  "repository": {
+    "url": "https://github.com/threatcode/threatmap",
+    "directory": "packages/plugins/devtools"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "prepare": "pnpm run build",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx scripts/watch-server.ts"
+  },
+  "dependencies": {
+    "@threatmap/sdk-frontend": "workspace:*",
+    "@threatmap/sdk-shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.0.10",
+    "@types/ws": "^8.18.2",
+    "chokidar": "4.0.3",
+    "jszip": "3.10.1",
+    "tsdown": "0.20.1",
+    "tsx": "^4.19.2",
+    "ws": "8.18.0"
+  }
+}

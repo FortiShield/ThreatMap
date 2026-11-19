@@ -15,7 +15,7 @@ generates:
     plugins:
       - typescript
     config:
-      enumValues: './enums.js'
+      enumValues: "./enums.js"
 
   ./src/transport/latest/__generated__/:
     plugins:
@@ -31,7 +31,7 @@ generates:
 
 config:
   declarationKind: type
-  maybeValue: 'T | undefined | null'
+  maybeValue: "T | undefined | null"
   strictScalars: true
   skipTypename: true
   dedupeFragments: true

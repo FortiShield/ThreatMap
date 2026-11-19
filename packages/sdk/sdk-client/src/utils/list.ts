@@ -14,10 +14,10 @@ export type ListBuilderVars<Filter, Order> = {
 /**
  * List builder. Chain methods and await to execute.
  */
-// eslint-disable-next-line prettier/prettier
-export abstract class ListBuilder<Type, Filter, Order>
-  implements PromiseLike<Connection<Type>>
-{
+
+export abstract class ListBuilder<Type, Filter, Order> implements PromiseLike<
+  Connection<Type>
+> {
   protected readonly graphql: GraphQLClient;
   protected vars: ListBuilderVars<Filter, Order>;
 

@@ -2,13 +2,13 @@ import { Client } from "@threatmap/sdk-client";
 
 type Result<T> =
   | {
-    kind: "Ok";
-    value: T;
-  }
+      kind: "Ok";
+      value: T;
+    }
   | {
-    kind: "Error";
-    error: string;
-  };
+      kind: "Error";
+      error: string;
+    };
 
 type QuickSSRFProvider = {
   id: string;
